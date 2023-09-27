@@ -9,6 +9,7 @@ public class BCP {
     private int x = 0;
     private int y = 0;
     List<String> instrucoes;
+    private int tempoDeEspera = 0;
 
 
     public BCP(String nome, EstadoProcesso estado, List<String> instrucoes) {
@@ -43,6 +44,22 @@ public class BCP {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public void decTempoDeEspera() {
+        if (tempoDeEspera != 0) {
+            tempoDeEspera--;
+        }
+    }
+
+    public int getTempoDeEspera() {
+        return tempoDeEspera;
+    }
+
+    public void setTempoDeEspera(int tempoDeEspera) {
+        if (tempoDeEspera > 0) {
+            this.tempoDeEspera = tempoDeEspera;
+        }
     }
 
     public String getInstrucao() {
