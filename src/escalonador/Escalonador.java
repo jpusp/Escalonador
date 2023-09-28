@@ -4,10 +4,7 @@ import processo.BCP;
 import processo.DecodificadorDeInstrucao;
 import repositorio.RepositorioDeProcessos;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 import static processo.EstadoProcesso.BLOQUEADO;
 import static processo.EstadoProcesso.EXECUTANDO;
@@ -28,12 +25,12 @@ public class Escalonador {
     ) {
         this.decodificador = decodificador;
         this.quantum = quantum;
-        processosProntos = new PriorityQueue<>();
+        processosProntos = new ArrayDeque<>();
         tabelaDeProcessos = repositorio.getProcessos();
         if (tabelaDeProcessos != null) {
-            processosProntos.addAll(tabelaDeProcessos);
+            tabelaDeProcessos.forEach (processo -> processosProntos.add(processo));
         }
-        processosBloqueados = new PriorityQueue<>();
+        processosBloqueados = new ArrayDeque<>();
     }
 
     public void inicia() {
@@ -42,20 +39,24 @@ public class Escalonador {
             if (processo == null) {
                 verificaBloqueados();
             } else {
-                processaPronto(processo);
+                rodaProcesso(processo);
+                if ((numProcessosExecutados % 2) == 0) {
+                    verificaBloqueados();
+                }
             }
         }
     }
 
-    private void processaPronto(BCP processo) {
+    private void rodaProcesso(BCP processo) {
         processo.setEstadoProcesso(EXECUTANDO);
-        numProcessosExecutados++;
         int localQuantum = quantum;
         while (localQuantum > 0) {
             String instrucao = processo.getInstrucao();
             if (instrucao.equals(SAIDA)) {
                 processosProntos.remove(processo);
                 tabelaDeProcessos.remove(processo);
+                localQuantum = 0;
+                return;
             } else {
                 decodificador.decodifica(processo, instrucao);
 
@@ -63,15 +64,16 @@ public class Escalonador {
                     processosBloqueados.add(processo);
                     localQuantum = 0;
                 } else {
-                    processosProntos.add(processo);
                     localQuantum--;
                 }
             }
-
-            if ((numProcessosExecutados % 2) == 0) {
-                verificaBloqueados();
-            }
         }
+
+        if (processo.getEstadoProcesso() != BLOQUEADO) {
+            processosProntos.add(processo);
+        }
+
+        numProcessosExecutados++;
     }
 
     private void verificaBloqueados() {
