@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 public class DecodificadorDeInstrucao {
     private final int tempoDeEspera;
-    private Pattern atribuicaoPattern = Pattern.compile("(?:X|Y)=([0-9]+)");
-    private Pattern ESPattern = Pattern.compile("^E\\\\/S$");
+    private Pattern atribuicaoPattern = Pattern.compile("(X|Y)=([0-9]+)");
+    private Pattern ESPattern = Pattern.compile("^E\\/S$");
 
     public DecodificadorDeInstrucao(int tempoDeEspera) {
         this.tempoDeEspera = tempoDeEspera;
