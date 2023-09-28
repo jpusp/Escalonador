@@ -63,6 +63,7 @@ public class BCP {
     }
 
     public String getInstrucao() {
+        if (pc >= instrucoes.size()) return null;
         String instrucao = instrucoes.get(pc);
         pc++;
         return instrucao;
