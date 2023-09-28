@@ -69,13 +69,12 @@ public class ProcessScheduler {
                 return;
             } else {
                 instructionDecoder.decode(process, instruction);
-
                 if (process.getState() == BLOCKED) {
                     logger.log("E/S iniciada em " + process.getName());
                     blockedProcesses.add(process);
-                } else {
-                    localQuantum--;
                 }
+
+                localQuantum--;
             }
         }
 
