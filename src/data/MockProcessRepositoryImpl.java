@@ -1,19 +1,19 @@
-package repositorio;
+package data;
 
-import processo.BCP;
-import processo.EstadoProcesso;
+import process.BCP;
+import process.ProcessState;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
+public class MockProcessRepositoryImpl implements ProcessRepository {
     @Override
-    public List<BCP> getProcessos() {
+    public List<BCP> loadProcesses() {
         return new ArrayList<>(
                 List.of(
                     new BCP(
                         "TESTE-1",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                         "X=8",
@@ -31,7 +31,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-2",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "X=8",
@@ -60,7 +60,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-3",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "X=8",
@@ -82,7 +82,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-4",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "X=8",
@@ -102,7 +102,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-5",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "X=8",
@@ -121,7 +121,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-6",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "X=8",
@@ -144,7 +144,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-7",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "X=8",
@@ -166,7 +166,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-8",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "X=8",
@@ -195,7 +195,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-9",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "COM",
@@ -218,7 +218,7 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                     ),
                     new BCP(
                             "TESTE-10",
-                            EstadoProcesso.PRONTO,
+                            ProcessState.READY,
                             new ArrayList<>(
                                     List.of(
                                             "COM",
@@ -230,8 +230,6 @@ public class MockRepositorioDeProcessosImpl implements RepositorioDeProcessos{
                                     )
                             )
                     )
-
-
                 )
         );
     }
