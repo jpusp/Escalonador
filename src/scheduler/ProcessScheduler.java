@@ -18,10 +18,12 @@ public class ProcessScheduler {
     private final int quantum;
     private Queue<BCP> readyProcesses;
     private Queue<BCP> blockedProcesses;
-    private int executedProcessCount = 0;
+    private int initialProcessCount;
+    private int processSwapCount = 0;
+    private int totalExecutedInstructionsCount = 0;
 
     public ProcessScheduler(
-            ProcessRepository repositorio,
+            ProcessRepository processRepository,
             InstructionDecoder instructionDecoder,
             Logger logger,
             int quantum
@@ -30,47 +32,45 @@ public class ProcessScheduler {
         this.logger = logger;
         this.quantum = quantum;
         readyProcesses = new ArrayDeque<>();
-        processTable = repositorio.loadProcesses();
-        if (processTable != null) {
-            processTable.forEach (processo -> readyProcesses.add(processo));
-        }
+        processTable = Objects.requireNonNullElse(processRepository.loadProcesses(), new ArrayList<>());
+        initialProcessCount = processTable.size();
+        processTable.forEach (processo -> readyProcesses.add(processo));
         blockedProcesses = new ArrayDeque<>();
     }
 
     public void start() {
-        while (!(readyProcesses.isEmpty() && blockedProcesses.isEmpty())) {
-            BCP process = readyProcesses.poll();
-            if (process == null) {
+        while (!isEmpty()) {
+            if (readyProcesses.isEmpty()) {
                 checkBlockedProcesses();
             } else {
+                BCP process = readyProcesses.poll();
                 runProcess(process);
-                if ((executedProcessCount % 2) == 0) {
+                if ((processSwapCount % 2) == 0) {
                     checkBlockedProcesses();
                 }
             }
         }
+    }
 
-        logger.log("MEDIA DE TROCAS: ");
-        logger.log("MEDIA DE INSTRUCOES: ");
-        logger.log("QUANTUM: " + quantum);
+    private boolean isEmpty() {
+        return readyProcesses.isEmpty() && blockedProcesses.isEmpty();
     }
 
     private void runProcess(BCP process) {
-        logger.log("Executando " + process.getName());
+        logger.logExecution(process);
         process.setState(RUNNING);
         int localQuantum = quantum;
         while (localQuantum > 0 && process.getState() != BLOCKED) {
             String instruction = process.getInstruction();
             if (instruction.equals(EXIT_COMMAND)) {
-                readyProcesses.remove(process);
                 processTable.remove(process);
-                executedProcessCount++;
-                logger.log(process.getName() + " terminado. X=" + process.getX() + ". Y=" + process.getY());
+                processSwapCount++;
+                logger.logFinish(process);
                 return;
             } else {
                 instructionDecoder.decode(process, instruction);
                 if (process.getState() == BLOCKED) {
-                    logger.log("E/S iniciada em " + process.getName());
+                    logger.logES(process);
                     blockedProcesses.add(process);
                 }
 
@@ -78,13 +78,14 @@ public class ProcessScheduler {
             }
         }
 
-        logger.log("Interrompendo " + process.getName() + " após " + (quantum - localQuantum) + " instruções");
+        processSwapCount++;
+        int executedInstructions = quantum - localQuantum;
+        totalExecutedInstructionsCount += executedInstructions;
+        logger.logInterruption(process, executedInstructions);
 
         if (process.getState() != BLOCKED) {
             readyProcesses.add(process);
         }
-
-        executedProcessCount++;
     }
 
     private void checkBlockedProcesses() {
@@ -100,5 +101,13 @@ public class ProcessScheduler {
         for (BCP process : processesToBeExcluded) {
             blockedProcesses.remove(process);
         }
+    }
+
+    public int getProcessSwapAverage() {
+        return processSwapCount / initialProcessCount;
+    }
+
+    public double getInstructionsAverage() {
+        return totalExecutedInstructionsCount / (double) processSwapCount;
     }
 }
