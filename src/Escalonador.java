@@ -1,26 +1,26 @@
+import data.ProcessRepository;
+import data.ProcessRepositoryImpl;
+import data.QuantumRepository;
+import data.QuantumRepositoryImpl;
 import log.Logger;
 import log.LoggerImpl;
 import scheduler.ProcessScheduler;
 import process.InstructionDecoder;
-import data.MockProcessRepositoryImpl;
 
 public class Escalonador {
-    private static final int TEMPO_ESPERA = 2;
-    private static final int QUANTUM = 3;
+    private static final int WAIT_QUANTUM = 2;
     public static void main(String[] args) {
-        Logger logger = new LoggerImpl(QUANTUM);
-        ProcessScheduler escalonador = new ProcessScheduler(
-                //new RepositorioDeProcessosImpl(),
-                new MockProcessRepositoryImpl(),
-                new InstructionDecoder(TEMPO_ESPERA),
-                logger,
-                QUANTUM
-        );
+        QuantumRepository quantumRepository = new QuantumRepositoryImpl();
+        int quantum = quantumRepository.loadQuantum();
+        Logger logger = new LoggerImpl(quantum);
+        ProcessRepository processRepository = new ProcessRepositoryImpl(logger);
+        InstructionDecoder decoder = new InstructionDecoder(WAIT_QUANTUM);
 
+        ProcessScheduler escalonador = new ProcessScheduler(processRepository, decoder, logger, quantum);
         escalonador.start();
 
-        logger.log("MEDIA DE TROCAS: " + escalonador.getProcessSwapAverage());
+        logger.log("MEDIA DE TROCAS: " + String.format("%.2f", escalonador.getProcessSwapAverage()));
         logger.log("MEDIA DE INSTRUCOES: " + String.format("%.2f", escalonador.getInstructionsAverage()));
-        logger.log("QUANTUM: " + QUANTUM);
+        logger.log("QUANTUM: " + quantum);
     }
 }
