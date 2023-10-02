@@ -103,8 +103,8 @@ public class ProcessScheduler {
         }
     }
 
-    public int getProcessSwapAverage() {
-        return processSwapCount / initialProcessCount;
+    public double getProcessSwapAverage() {
+        return (double) processSwapCount / initialProcessCount;
     }
 
     public double getInstructionsAverage() {
