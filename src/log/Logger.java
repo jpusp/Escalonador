@@ -3,6 +3,9 @@ package log;
 import process.BCP;
 
 public interface Logger {
+
+    void logProcessLoading(BCP process);
+
     void logExecution(BCP process);
 
     void logES(BCP process);

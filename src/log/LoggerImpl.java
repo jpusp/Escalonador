@@ -14,6 +14,11 @@ public class LoggerImpl implements Logger {
     }
 
     @Override
+    public void logProcessLoading(BCP process) {
+        log("Carregando " + process.getName());
+    }
+
+    @Override
     public void logExecution(BCP process) {
         log("Executando " + process.getName());
     }
